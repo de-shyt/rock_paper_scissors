@@ -1,6 +1,6 @@
 module Main where
 
-import qualified Lib
+import qualified GameIO
 
 main :: IO ()
-main = Lib.helloworld
+main = GameIO.startGame
