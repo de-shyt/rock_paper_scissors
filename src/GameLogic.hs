@@ -4,6 +4,7 @@ module GameLogic where
 
 import System.Random
 import Text.Read
+import qualified Data.Text as Text
 
 import qualified Telegram.Bot.API as Telegram
 import           Telegram.Bot.Simple
@@ -12,19 +13,6 @@ import           Telegram.Bot.Simple.UpdateParser
 
 data Type = Rock | Paper | Scissors deriving (Show, Eq)
 data Winner = User | Computer | Draw deriving (Show, Eq)
-
-getUserInput :: IO Type
-getUserInput = do
-    putStrLn "Please, choose a number:\n  1) Rock\n  2) Paper\n  3) Scissors"
-    answer <- getLine
-    let amount = read answer :: Int
-    case amount of
-        1 -> return Rock
-        2 -> return Paper
-        3 -> return Scissors
-        _ -> do
-            putStrLn "The number should be from 1 to 3."
-            getUserInput
 
 getComputerInput :: IO Type
 getComputerInput = do
@@ -35,8 +23,8 @@ getComputerInput = do
             1 -> return Paper
             2 -> return Scissors
 
-winLoseDraw :: Type -> Type -> Winner
-winLoseDraw userInput computerInput =
+findWinner :: Type -> Type -> Winner
+findWinner userInput computerInput =
     case (userInput, computerInput) of
         (Rock, Paper) -> Computer
         (Rock, Scissors) -> User
@@ -45,3 +33,23 @@ winLoseDraw userInput computerInput =
         (Scissors, Rock) -> Computer
         (Scissors, Paper) -> User
         (_, _) -> Draw
+
+winnerInfoOutput :: Winner -> Text.Text
+winnerInfoOutput winner =
+    case winner of
+        User -> "You won!"
+        Computer -> "Computer won!"
+        Draw -> "Nobody won:("
+
+introduction :: Text.Text
+introduction = Text.unlines [ "Welcome to rock-paper-scissors game!\n\n"] <> listOfCommands
+
+listOfCommands :: Text.Text
+listOfCommands = Text.unlines
+    [ "Use /play to start a new round\n"
+    , "Use /end or /exit to finish a current game\n"
+    , "Use /help to see the list of commands"
+    ]
+
+exitGame :: Text.Text
+exitGame = "Thank you for visiting us! Tschüß!"

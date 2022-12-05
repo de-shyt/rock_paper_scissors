@@ -22,7 +22,7 @@ executable rock-paper-scissors
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    other-modules: GameLogic, GameIO, TelegramAPI
+    other-modules: GameLogic, TelegramAPI
     -- TODO: create a new module => add its name here
 
     -- LANGUAGE extensions used by modules in this package.
