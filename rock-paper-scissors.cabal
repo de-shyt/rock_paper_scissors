@@ -1,0 +1,43 @@
+cabal-version:      2.4
+name:               rock-paper-scissors
+version:            0.1.0.0
+synopsis:           A rock-paper-scissors game
+description:        A popular game that can be tested via telegram bot.
+
+-- A URL where users can report bugs.
+-- bug-reports:
+license:            MIT
+license-file:       LICENSE
+author:             de-shyt
+maintainer:         de.shut@inbox.ru
+
+-- A copyright notice.
+-- copyright:
+category:           Game
+extra-source-files:
+    CHANGELOG.md
+    README.md
+
+executable rock-paper-scissors
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    other-modules: GameLogic, GameIO, TelegramAPI
+    -- TODO: create a new module => add its name here
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:    base ^>=4.16.4.0
+                      , random
+                      , base
+                      , http-api-data
+                      , http-client
+                      , http-client-tls
+                      , mtl
+                      , servant-client
+                      , telegram-bot-simple
+                      , text
+                      , time
+    hs-source-dirs:   app, src
+    -- TODO: directories with source files
+    default-language: Haskell2010

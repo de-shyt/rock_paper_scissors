@@ -1,0 +1,14 @@
+/home/deshyt/FOLDER/rock_paper_scissors/CHANGELOG.md:
+  hash: 760fc38dd376aff912079d269832bec885027b8034edb8271ee0925abcfee5e4
+/home/deshyt/FOLDER/rock_paper_scissors/README.md:
+  hash: 16454318700846a045590c67b35fff45574cf3643d548f7e5551d356e74ce2e0
+/home/deshyt/FOLDER/rock_paper_scissors/app/Main.hs:
+  hash: f1e14a8ade0d6e0384f997966e67831b48f30c85aa36d4c23443625a2be2b3a6
+/home/deshyt/FOLDER/rock_paper_scissors/rock-paper-scissors.cabal:
+  hash: bcd400121b9ca61297537b4000da9979b51b5e6d168697aead48c799fde3a51e
+/home/deshyt/FOLDER/rock_paper_scissors/src/GameIO.hs:
+  hash: a46ae6b62e8e2685bc11e9bbfd142935623f9e3fee1fa6e2af43388a4331adb3
+/home/deshyt/FOLDER/rock_paper_scissors/src/GameLogic.hs:
+  hash: cfbb9096013a69a4c8363ddb77e07ef534b29dbbad92976c194d7c06930c9fca
+/home/deshyt/FOLDER/rock_paper_scissors/src/TelegramAPI.hs:
+  hash: 43c616b7b9b4c0f49782b7cf3637695590c78521eb61cdb0ae54c40fb0faa4dc
