@@ -16,20 +16,11 @@ import Telegram.Bot.Simple.UpdateParser
 
 data Model = Model
     { lastMessage :: Text }
---    { todoItems :: [TodoItem] }
     deriving (Show)
-
---data TodoItem = TodoItem
---    { todoItemTitle :: Text }
---    deriving (Show)
-
---addItem :: TodoItem -> Model -> Model
---addItem item model = model { todoItems = item : todoItems model }
 
 
 data Action
     = NoAction
---    | AddItem Text
     | Welcome
     | ExitGame
     | Help
@@ -55,8 +46,6 @@ handleUpdate _ = parseUpdate
     <|> Help <$ (command "help")
 --    <|> WriteLastMessage <$ (command "write")
     <|> Input <$> text
---    <|> AddItem <$> text   -- here we extract `text` from json via `parseUpdate` function
-                                                  -- AddItem <$> text  <=>  fmap AddItem text
 
 -- | How to handle 'Action's.
 handleAction :: Action -> Model -> Eff Action Model
@@ -75,19 +64,12 @@ handleAction action model =
         RunRound -> model <# do
             replyText "You're playing"
 --            liftIO (runRound model)
---            userInput <- GL.getUserInput
---            computerInput <- GL.getComputerInput
---            winnerInfoOutput $ GL.winLoseDraw userInput computerInput
---            nextRound
             pure NoAction
 --        WriteLastMessage -> model <# do
 --            replyText (lastMessage model)
         Input msg -> model {lastMessage = msg} <# do
           replyText "Got it"
           pure NoAction
---        AddItem title -> addItem (TodoItem { todoItemTitle = title }) model <# do
---            replyText "Got it"
---            pure NoAction
 
 -- | Run bot with a given 'Telegram.Token'.
 run :: Telegram.Token -> IO ()

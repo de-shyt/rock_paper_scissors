@@ -44,12 +44,7 @@ exitGame = "Thank you for playing! Tschüß!"
 runRound :: IO ()
 runRound = do
     putStrLn "I'm runRound"
---    userInput <- GL.getUserInput
---    computerInput <- GL.getComputerInput
---    winnerInfoOutput $ GL.winLoseDraw userInput computerInput
---    nextRound
-
---startGame :: IO()
---startGame = do
---  introduction
---  runRound
+    userInput <- GL.getUserInput
+    computerInput <- GL.getComputerInput
+    winnerInfoOutput $ GL.winLoseDraw userInput computerInput
+    nextRound
