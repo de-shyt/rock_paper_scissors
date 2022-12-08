@@ -14,7 +14,14 @@ import           Telegram.Bot.Simple.UpdateParser
 data Type = Rock | Paper | Scissors deriving (Show, Eq)
 data Winner = User | Computer | Draw deriving (Show, Eq)
 
-getComputerInput :: IO Type
+getUserInput ::  Text.Text -> Maybe Type
+getUserInput userChoice
+    | userChoice == "Rock" = Just Rock
+    | userChoice == "Paper" = Just Paper
+    | userChoice == "Scissors" = Just Scissors
+    | otherwise = Nothing
+
+getComputerInput :: BotM Type
 getComputerInput = do
     g <- getStdGen
     let result = (head $ take 1 (randoms g :: [Int])) `mod` 3 in
@@ -22,6 +29,10 @@ getComputerInput = do
             0 -> return Rock
             1 -> return Paper
             2 -> return Scissors
+
+getComputerInputInfo :: Type -> Text.Text
+getComputerInputInfo computerInput =
+    Text.pack $ "Computer's choice is:\n\n" <> show computerInput
 
 findWinner :: Type -> Type -> Winner
 findWinner userInput computerInput =

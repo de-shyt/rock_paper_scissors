@@ -121,7 +121,7 @@ handleAction action model =
             }
             pure NoAction
         RunRound -> model { state = Play } <# do
-            reply (toReplyMessage "Your choice is:") {
+            reply (toReplyMessage "What's your choice?") {
                 replyMessageReplyMarkup = Just $ Telegram.SomeReplyKeyboardMarkup chooseFigureInlineKeyboard
             }
             pure NoAction
@@ -132,38 +132,30 @@ handleAction action model =
                 Wait -> case (msg) of
                     "yes" -> pure RunRound
                     "no" -> pure ExitGame
+                    "enter the amount of rounds" -> do
+                        replyText "This mode is not implemented yet"
+                        pure DoYouWantToPlay
                     _ -> do
                         replyText "I don't understand what you want:("
                         pure DoYouWantToPlay
-                Play -> do
-                    if (msg == "/end")
-                        then pure ExitGame
-                    else
---                      replyText "Bot's choice is Rock"
---                    computerInput <- Eff (GL.getComputerInput)
---                    replyText $ GL.winnerInfoOutput $ GL.findWinner GL.Paper GL.Rock
---                        where
---                            userInput = case msg of
---                                "Rock" -> GL.Rock
---                                "Paper" -> GL.Paper
---                                "Scissors" -> GL.Scissors
---                                _ -> do
---                                    replyText "I don't understand what you want:("
---                                    pure DoYouWantToPlay
-
-                        case msg of
-                            "Rock" -> do
-                                replyText "Nice choice!"  -- replyText $ GL.winnerInfoOutput $ GL.findWinner GL.Rock computerInput
-                                pure DoYouWantToPlay
-                            "Paper" ->  do  -- replyText $ GL.winnerInfoOutput $ GL.findWinner GL.Paper computerInput
-                                replyText "Nice choice!"
-                                pure DoYouWantToPlay
-                            "Scissors" -> do    -- replyText $ GL.winnerInfoOutput $ GL.findWinner GL.Scissors computerInput
-                                replyText "Nice choice!"
-                                pure DoYouWantToPlay
-                            _ -> do
+                Play ->
+                    if (msg == "/end") then
+                        pure ExitGame
+                    else do
+                        computerInput <- GL.getComputerInput
+                        let userInput = GL.getUserInput msg in
+                            if (userInput == Nothing) then do
                                 replyText "I don't understand what you want:("
                                 pure RunRound
+                            else do
+                                let winner = GL.findWinner (removeMaybe userInput) computerInput in do
+                                    replyText $ GL.getComputerInputInfo computerInput
+                                    replyText $ GL.winnerInfoOutput winner
+                                    pure RunRound
+                                where
+                                    removeMaybe :: Maybe a -> a
+                                    removeMaybe (Just x) = x
+                                    removeMaybe _ = error ("`removeMaybe` got Nothing")
 
 
 
