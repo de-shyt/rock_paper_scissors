@@ -14,12 +14,12 @@ import           Telegram.Bot.Simple.UpdateParser
 data Type = Rock | Paper | Scissors deriving (Show, Eq)
 data Winner = User | Computer | Draw deriving (Show, Eq)
 
-getUserInput ::  Text.Text -> Maybe Type
+getUserInput ::  Text.Text -> BotM (Maybe Type)
 getUserInput userChoice
-    | userChoice == "Rock" = Just Rock
-    | userChoice == "Paper" = Just Paper
-    | userChoice == "Scissors" = Just Scissors
-    | otherwise = Nothing
+    | userChoice == "Rock" = return $ Just Rock
+    | userChoice == "Paper" = return $ Just Paper
+    | userChoice == "Scissors" = return $ Just Scissors
+    | otherwise = return Nothing
 
 getComputerInput :: BotM Type
 getComputerInput = do
@@ -31,7 +31,7 @@ getComputerInput = do
 
 getComputerInputInfo :: Type -> Text.Text
 getComputerInputInfo computerInput =
-    Text.pack $ "Computer's choice is:\n\n" <> show computerInput
+    Text.pack $ "Computer's choice is: " <> show computerInput <> "\n"
 
 findWinner :: Type -> Type -> Winner
 findWinner userInput computerInput =
@@ -50,6 +50,12 @@ getWinnerInfo winner =
         User -> "You won!"
         Computer -> "Computer won!"
         Draw -> "Nobody won:("
+
+printScore :: Int -> Int -> Text.Text
+printScore computerScore userScore = Text.unlines
+    [ Text.pack $ "Computer's score is " ++ (show computerScore)
+    , Text.pack $ "Your score is " ++ (show userScore)
+    ]
 
 introduction :: Text.Text
 introduction = Text.unlines [ "Welcome to rock-paper-scissors game!\n\n"] <> listOfCommands

@@ -24,7 +24,10 @@ data State
 
 
 data Model = Model
-    { state :: State }
+    { state :: State
+    , computerScore :: Int
+    , userScore :: Int
+    }
     deriving (Show)
 
 
@@ -40,7 +43,7 @@ data Action
 
 bot :: BotApp Model Action
 bot = BotApp
-    { botInitialModel = Model { state = Start }
+    { botInitialModel = Model { state = Start, computerScore = 0, userScore = 0 }
     , botAction = flip handleUpdate
     , botHandler = handleAction
     , botJobs = []  -- a sequence jobs that a bot needs to do
@@ -100,62 +103,74 @@ handleUpdate _ = parseUpdate
 -- | How to handle 'Action's.
 handleAction :: Action -> Model -> Eff Action Model
 handleAction action model =
-    case action of
-        NoAction -> pure model
-        Welcome -> model { state = Start } <# do
-            replyText GL.introduction
-            pure DoYouWantToPlay
-        DoYouWantToPlay -> model { state = Wait } <# do
-            reply (toReplyMessage "Do you want to play?") {
-                replyMessageReplyMarkup = Just $ Telegram.SomeReplyKeyboardMarkup doYouWantToPlayInlineKeyboard
-            }
-            pure NoAction
-        ExitGame -> model { state = Stopped } <# do
-            reply (toReplyMessage GL.exitGame) {
-                replyMessageReplyMarkup = Just $ Telegram.SomeReplyKeyboardMarkup startInlineKeyboard
-            }
-            pure NoAction
-        Help -> model { state = Start } <# do
-            reply (toReplyMessage GL.listOfCommands) {
-                replyMessageReplyMarkup = Just $ Telegram.SomeReplyKeyboardMarkup playInlineKeyboard
-            }
-            pure NoAction
-        RunRound -> model { state = Play } <# do
-            reply (toReplyMessage "What's your choice?") {
-                replyMessageReplyMarkup = Just $ Telegram.SomeReplyKeyboardMarkup chooseFigureInlineKeyboard
-            }
-            pure NoAction
-        Input msg -> model <# do
-            case (state model) of
-                Start -> pure Welcome
-                Stopped -> pure ExitGame
-                Wait -> case (msg) of
-                    "yes" -> pure RunRound
-                    "no" -> pure ExitGame
-                    "enter the amount of rounds" -> do
-                        replyText "This mode is not implemented yet"
-                        pure DoYouWantToPlay
-                    _ -> do
-                        replyText "I don't understand what you want:("
-                        pure DoYouWantToPlay
-                Play ->
-                    if (msg == "/end") then
-                        pure ExitGame
-                    else do
-                        computerInput <- GL.getComputerInput
-                        let userInput = GL.getUserInput msg in
-                            if (userInput == Nothing) then do
-                                replyText "I don't understand what you want:("
-                                pure RunRound
-                            else do
-                                let winner = GL.findWinner (removeMaybe userInput) computerInput in do
-                                    replyText $ GL.getComputerInputInfo computerInput
-                                    replyText $ GL.getWinnerInfo winner
-                                    pure RunRound
-                                where
-                                    removeMaybe :: Maybe a -> a
-                                    removeMaybe (Just x) = x
-                                    removeMaybe _ = error ("`removeMaybe` got Nothing")
+  case action of
+    NoAction -> pure model
+    Welcome -> model { state = Start, computerScore = 0, userScore = 0 } <# do
+      replyText GL.introduction
+      pure DoYouWantToPlay
+    DoYouWantToPlay -> model { state = Wait } <# do
+      reply (toReplyMessage "Do you want to play?") {
+        replyMessageReplyMarkup = Just $ Telegram.SomeReplyKeyboardMarkup doYouWantToPlayInlineKeyboard
+      }
+      pure NoAction
+    ExitGame -> model { state = Stopped } <# do
+      reply (toReplyMessage GL.exitGame) {
+        replyMessageReplyMarkup = Just $ Telegram.SomeReplyKeyboardMarkup startInlineKeyboard
+      }
+      pure NoAction
+    Help -> model { state = Start } <# do
+      reply (toReplyMessage GL.listOfCommands) {
+        replyMessageReplyMarkup = Just $ Telegram.SomeReplyKeyboardMarkup playInlineKeyboard
+      }
+      pure NoAction
+    RunRound -> model { state = Play } <# do
+      reply (toReplyMessage "What's your choice?") {
+        replyMessageReplyMarkup = Just $ Telegram.SomeReplyKeyboardMarkup chooseFigureInlineKeyboard
+      }
+      pure NoAction
+    Input msg -> do
+      case (state model) of
+        Start -> model <# do
+          pure Welcome
+        Stopped -> model <# do
+          pure ExitGame
+        Wait -> model <# do
+          case (msg) of
+            "yes" -> pure RunRound
+            "no" -> pure ExitGame
+            "enter the amount of rounds" -> do
+              replyText "This mode is not implemented yet"
+              pure DoYouWantToPlay
+            _ -> do
+              replyText "I don't understand what you want:("
+              pure DoYouWantToPlay
+        Play -> do
+          if (msg == "/end") then
+            model <# do
+            pure ExitGame
+          else
+            model <# do
+            computerInput <- GL.getComputerInput
+            userInput <- GL.getUserInput msg
+            if (userInput == Nothing) then
+              do
+              replyText "I don't understand what you want:("
+              pure RunRound
+            else
+              let winner = GL.findWinner (removeMaybe userInput) computerInput in
+                do
+    --              model { computerScore = updateScore (computerScore model) GL.Computer winner }
+                replyText $ GL.getComputerInputInfo computerInput <> GL.getWinnerInfo winner <> "\n\n" <> GL.printScore (computerScore model) (userScore model)
+                pure RunRound
+              where
+                removeMaybe :: Maybe a -> a
+                removeMaybe (Just x) = x
+                removeMaybe _ = error ("`removeMaybe` got Nothing")
+
+updateScore :: Int -> GL.Winner -> GL.Winner -> Int
+updateScore prevScore player winner
+    | player == winner = prevScore + 1
+    | otherwise        = prevScore
 
 
 
