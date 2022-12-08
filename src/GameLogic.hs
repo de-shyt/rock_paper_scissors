@@ -16,9 +16,9 @@ data Winner = User | Computer | Draw deriving (Show, Eq)
 
 getUserInput ::  Text.Text -> BotM (Maybe Type)
 getUserInput userChoice
-    | userChoice == "Rock" = return $ Just Rock
-    | userChoice == "Paper" = return $ Just Paper
-    | userChoice == "Scissors" = return $ Just Scissors
+    | userChoice == "🪨" = return $ Just Rock
+    | userChoice == "📄" = return $ Just Paper
+    | userChoice == "✂️" = return $ Just Scissors
     | otherwise = return Nothing
 
 getComputerInput :: BotM Type
@@ -29,9 +29,11 @@ getComputerInput = do
         1 -> return Paper
         2 -> return Scissors
 
-getComputerInputInfo :: Type -> Text.Text
-getComputerInputInfo computerInput =
-    Text.pack $ "Computer's choice is: " <> show computerInput <> "\n"
+printComputerInput :: Type -> Text.Text
+printComputerInput computerInput
+    | computerInput == Rock = "🪨"
+    | computerInput == Paper = "📄"
+    | computerInput == Scissors = "✂️"
 
 findWinner :: Type -> Type -> Winner
 findWinner userInput computerInput =

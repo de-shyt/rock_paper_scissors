@@ -82,7 +82,7 @@ doYouWantToPlayInlineKeyboard = Telegram.ReplyKeyboardMarkup
 chooseFigureInlineKeyboard :: Telegram.ReplyKeyboardMarkup
 chooseFigureInlineKeyboard = Telegram.ReplyKeyboardMarkup
     { Telegram.replyKeyboardMarkupKeyboard =
-        [ [ "Rock", "Paper", "Scissors" ]   --[[ "🪨", "📄", "✂️" ]]
+        [ [ "🪨", "📄", "✂️" ]
         , [ "/end" ]
         ]
     , Telegram.replyKeyboardMarkupResizeKeyboard = Just True
@@ -144,7 +144,7 @@ handleAction action model =
             _ -> do
               replyText "I don't understand what you want:("
               pure DoYouWantToPlay
-        Play -> do
+        Play ->
           if (msg == "/end") then
             model <# do
             pure ExitGame
@@ -160,7 +160,8 @@ handleAction action model =
               let winner = GL.findWinner (removeMaybe userInput) computerInput in
                 do
     --              model { computerScore = updateScore (computerScore model) GL.Computer winner }
-                replyText $ GL.getComputerInputInfo computerInput <> GL.getWinnerInfo winner <> "\n\n" <> GL.printScore (computerScore model) (userScore model)
+                replyText $ GL.printComputerInput computerInput
+                replyText $ GL.getWinnerInfo winner <> "\n\n" <> GL.printScore (computerScore model) (userScore model)
                 pure RunRound
               where
                 removeMaybe :: Maybe a -> a
