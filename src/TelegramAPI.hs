@@ -150,7 +150,7 @@ handleAction action model =
                             else do
                                 let winner = GL.findWinner (removeMaybe userInput) computerInput in do
                                     replyText $ GL.getComputerInputInfo computerInput
-                                    replyText $ GL.winnerInfoOutput winner
+                                    replyText $ GL.getWinnerInfo winner
                                     pure RunRound
                                 where
                                     removeMaybe :: Maybe a -> a

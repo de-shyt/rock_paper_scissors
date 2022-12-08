@@ -23,12 +23,11 @@ getUserInput userChoice
 
 getComputerInput :: BotM Type
 getComputerInput = do
-    g <- getStdGen
-    let result = (head $ take 1 (randoms g :: [Int])) `mod` 3 in
-        case result of
-            0 -> return Rock
-            1 -> return Paper
-            2 -> return Scissors
+    res <- randomIO :: BotM Int
+    case res `mod` 3 of
+        0 -> return Rock
+        1 -> return Paper
+        2 -> return Scissors
 
 getComputerInputInfo :: Type -> Text.Text
 getComputerInputInfo computerInput =
@@ -45,8 +44,8 @@ findWinner userInput computerInput =
         (Scissors, Paper) -> User
         (_, _) -> Draw
 
-winnerInfoOutput :: Winner -> Text.Text
-winnerInfoOutput winner =
+getWinnerInfo :: Winner -> Text.Text
+getWinnerInfo winner =
     case winner of
         User -> "You won!"
         Computer -> "Computer won!"
