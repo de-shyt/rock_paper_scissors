@@ -4,6 +4,10 @@ Author: Daria Shutina
 
 
 
-A game that is so familiar -- rock-paper-scissors
+Rock-paper-scissors using telegram bot [@RopasiBot](https://t.me/RopasiBot)
 
-Using telegram bot
+
+
+### Demo
+
+![rps_demo](./media/rps_demo.gif)

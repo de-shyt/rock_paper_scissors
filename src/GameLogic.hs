@@ -30,10 +30,11 @@ getComputerInput = do
         2 -> return Scissors
 
 printComputerInput :: Type -> Text.Text
-printComputerInput computerInput
-    | computerInput == Rock = "🪨"
-    | computerInput == Paper = "📄"
-    | computerInput == Scissors = "✂️"
+printComputerInput computerInput =
+    case computerInput of
+        Rock -> "🪨"
+        Paper -> "📄"
+        Scissors -> "✂️"
 
 findWinner :: Type -> Type -> Winner
 findWinner userInput computerInput =

@@ -149,7 +149,7 @@ handleAction action model =
             model <# do
             pure ExitGame
           else
-            model <# do
+            updateModel model GL.Computer <# do
             computerInput <- GL.getComputerInput
             userInput <- GL.getUserInput msg
             if (userInput == Nothing) then
@@ -159,9 +159,9 @@ handleAction action model =
             else
               let winner = GL.findWinner (removeMaybe userInput) computerInput in
                 do
-    --              model { computerScore = updateScore (computerScore model) GL.Computer winner }
+--                let model = updateModel model winner
                 replyText $ GL.printComputerInput computerInput
-                replyText $ GL.getWinnerInfo winner <> "\n\n" <> GL.printScore (computerScore model) (userScore model)
+                replyText $ GL.getWinnerInfo winner -- <> "\n\n" <> GL.printScore (computerScore model) (userScore model)
                 pure RunRound
               where
                 removeMaybe :: Maybe a -> a
@@ -173,7 +173,11 @@ updateScore prevScore player winner
     | player == winner = prevScore + 1
     | otherwise        = prevScore
 
-
+updateModel :: Model -> GL.Winner -> Model
+updateModel model winner =
+    model { computerScore = updateScore (computerScore model) GL.Computer winner
+          , userScore = updateScore (userScore model ) GL.User winner
+          }
 
 
 -- | Run bot with a given 'Telegram.Token'.
