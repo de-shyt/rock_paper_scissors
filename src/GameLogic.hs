@@ -2,7 +2,6 @@
 
 module GameLogic where
 
-import System.Random
 import Text.Read
 import qualified Data.Text as Text
 
@@ -13,21 +12,6 @@ import           Telegram.Bot.Simple.UpdateParser
 
 data Type = Rock | Paper | Scissors deriving (Show, Eq)
 data Winner = User | Computer | Draw deriving (Show, Eq)
-
-getUserInput ::  Text.Text -> BotM (Maybe Type)
-getUserInput userChoice
-    | userChoice == "🪨" = return $ Just Rock
-    | userChoice == "📄" = return $ Just Paper
-    | userChoice == "✂️" = return $ Just Scissors
-    | otherwise = return Nothing
-
-getComputerInput :: BotM Type
-getComputerInput = do
-    res <- randomIO :: BotM Int
-    case res `mod` 3 of
-        0 -> return Rock
-        1 -> return Paper
-        2 -> return Scissors
 
 printComputerInput :: Type -> Text.Text
 printComputerInput computerInput =

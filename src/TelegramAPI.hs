@@ -3,6 +3,7 @@
 module TelegramAPI where
 
 import qualified GameLogic as GL
+import System.Random
 
 import Control.Monad.Trans (liftIO)  -- to transform BotM() to IO()
 
@@ -150,8 +151,8 @@ handleAction action model =
             pure ExitGame
           else
             updateModel model GL.Computer <# do
-            computerInput <- GL.getComputerInput
-            userInput <- GL.getUserInput msg
+            computerInput <- getComputerInput
+            userInput <- getUserInput msg
             if (userInput == Nothing) then
               do
               replyText "I don't understand what you want:("
@@ -178,6 +179,21 @@ updateModel model winner =
     model { computerScore = updateScore (computerScore model) GL.Computer winner
           , userScore = updateScore (userScore model ) GL.User winner
           }
+
+getUserInput ::  Text -> BotM (Maybe GL.Type)
+getUserInput userChoice
+    | userChoice == "🪨" = return $ Just GL.Rock
+    | userChoice == "📄" = return $ Just GL.Paper
+    | userChoice == "✂️" = return $ Just GL.Scissors
+    | otherwise = return Nothing
+
+getComputerInput :: BotM GL.Type
+getComputerInput = do
+    res <- randomIO :: BotM Int
+    case res `mod` 3 of
+        0 -> return GL.Rock
+        1 -> return GL.Paper
+        2 -> return GL.Scissors
 
 
 -- | Run bot with a given 'Telegram.Token'.
