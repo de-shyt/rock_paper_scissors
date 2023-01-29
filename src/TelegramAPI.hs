@@ -72,7 +72,7 @@ doYouWantToPlayInlineKeyboard :: Telegram.ReplyKeyboardMarkup
 doYouWantToPlayInlineKeyboard = Telegram.ReplyKeyboardMarkup
     { Telegram.replyKeyboardMarkupKeyboard =
         [ [ "yes", "no" ]
-        , [ "enter the amount of rounds" ]
+        -- , [ "enter the amount of rounds" ]
         ]
     , Telegram.replyKeyboardMarkupResizeKeyboard = Just True
     , Telegram.replyKeyboardMarkupOneTimeKeyboard = Just False
@@ -200,4 +200,4 @@ getComputerInput = do
 run :: Telegram.Token -> IO ()
 run token = do
     env <- Telegram.defaultTelegramClientEnv token
-    startBot_ (traceBotDefault bot) env
+    startBot_ (traceBotDefault (conversationBot Telegram.updateChatId bot)) env
