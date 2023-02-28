@@ -4,6 +4,4 @@ Author: Daria Shutina
 
 
 
-A game that is so familiar -- rock-paper-scissors
-
-Using telegram bot
+A rock-paper-scissors console game
